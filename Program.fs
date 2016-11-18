@@ -2,9 +2,11 @@
 
 open System
 open System.Runtime.InteropServices
+open Microsoft.FSharp.NativeInterop
 
-[<DllImport("librtlsdr")>]
-RTLSDR_API uint32_t rtlsdr_get_device_count()
+
+[<DllImport("librtlsdr", CallingConvention=CallingConvention.Cdecl)>]
+extern uint32 rtlsdr_get_device_count();
 
 [<EntryPoint>]
 let main argv = 
