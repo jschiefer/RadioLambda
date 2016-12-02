@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FSharpLintSettings>
+    <Analysers>
+  </Analysers>
+</FSharpLintSettings>
+
+<?xml version="1.0" encoding="utf-8"?>
+<FSharpLintSettings xmlns="https://github.com/fsprojects/FSharpLint/blob/master/ConfigurationSchema.xsd">
+  <IgnoreFiles Update="Overwrite"><![CDATA[assemblyinfo.*]]></IgnoreFiles>
+  <Analysers>
+    <NameConventions>
+      <Rules>
+        <RulesNamingConventionsUnderscoreError>
+          <Enabled>False</Enabled>
+        </RulesNamingConventionsUnderscoreError>
+      </Rules>
+    </NameConventions>
+  </Analysers>
+</FSharpLintSettings>
