@@ -1,3 +1,4 @@
+*.userprefs
 project.lock.json
 bin/
 obj/
