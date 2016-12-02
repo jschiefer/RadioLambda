@@ -1,12 +1,7 @@
 ﻿// Learn more about F# at http://fsharp.org
 
 open System
-open System.Runtime.InteropServices
-open Microsoft.FSharp.NativeInterop
-
-
-[<DllImport("librtlsdr", CallingConvention=CallingConvention.Cdecl)>]
-extern uint32 rtlsdr_get_device_count();
+open RtlSdr
 
 [<EntryPoint>]
 let main argv = 
