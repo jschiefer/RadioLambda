@@ -1,6 +1,8 @@
 ﻿// Learn more about F# at http://fsharp.org
+#nowarn "9"
 
 open System
+open FSharp.NativeInterop
 open Hamstr.RtlSdr
 
 [<EntryPoint>]
@@ -15,4 +17,10 @@ let main argv =
             let name = rtlsdr_get_device_name(i)
             printfn "%A" name
         )
+
+    let mutable dev:nativeptr<rtlsdr_dev_t> = 0 |> nativeint |> NativePtr.ofNativeInt
+    let r = rtlsdr_open(&& dev, 0u)
+    printfn "open returned %A" r
+    let s = rtlsdr_close(dev)
+    printfn "close returned %A" s
     0 // return an integer exit code
