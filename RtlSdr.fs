@@ -166,24 +166,22 @@ extern int rtlsdr_set_freq_correction(rtlsdr_dev_t *dev, int ppm);
 [<DllImport("librtlsdr", CallingConvention=PlatformCallingConvention)>]
 extern int rtlsdr_get_freq_correction(rtlsdr_dev_t *dev);
 
-(*
-enum rtlsdr_tuner {
-    RTLSDR_TUNER_UNKNOWN = 0,
-    RTLSDR_TUNER_E4000,
-    RTLSDR_TUNER_FC0012,
-    RTLSDR_TUNER_FC0013,
-    RTLSDR_TUNER_FC2580,
-    RTLSDR_TUNER_R820T,
-    RTLSDR_TUNER_R828D
-};
+type rtlsdr_tuner =
+    | RTLSDR_TUNER_UNKNOWN = 0
+    | RTLSDR_TUNER_E4000 = 1
+    | RTLSDR_TUNER_FC0012 = 2
+    | RTLSDR_TUNER_FC0013 = 3
+    | RTLSDR_TUNER_FC2580 = 4
+    | RTLSDR_TUNER_R820T = 5
+    | RTLSDR_TUNER_R828D = 6
 
 /// Get the tuner type.
 ///
 /// <param name="dev">The device handle given by rtlsdr_open()</param>
 /// <returns>RTLSDR_TUNER_UNKNOWN on error, tuner type otherwise</returns>
 [<DllImport("librtlsdr", CallingConvention=PlatformCallingConvention)>]
-extern enum rtlsdr_tuner rtlsdr_get_tuner_type(rtlsdr_dev_t *dev);
-*)
+extern rtlsdr_tuner rtlsdr_get_tuner_type(rtlsdr_dev_t *dev)
+
 /// Get a list of gains supported by the tuner.
 ///
 /// NOTE: The gains argument must be preallocated by the caller. If NULL is
@@ -311,20 +309,6 @@ extern int rtlsdr_read_sync(rtlsdr_dev_t *dev, void *buf, int len, int *n_read);
 /// Read samples from the device asynchronously. This function will block until
 /// it is being canceled using rtlsdr_cancel_async()
 ///
-/// NOTE: This function is deprecated and is subject for removal.
-///
-/// <param name="dev">The device handle given by rtlsdr_open()</param>
-/// <param name="cb">Callback function to return received samples</param>
-/// <param name="ctx">User specific context to pass via the callback function</param>
-/// <returns>0 on success</returns>
-(*
-[<DllImport("librtlsdr", CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_wait_async(rtlsdr_dev_t *dev, rtlsdr_read_async_cb_t cb, void *ctx);
-
-
-/// Read samples from the device asynchronously. This function will block until
-/// it is being canceled using rtlsdr_cancel_async()
-///
 /// <param name="dev">The device handle given by rtlsdr_open()</param>
 /// <param name="cb">Callback function to return received samples</param>
 /// <param name="ctx">User specific context to pass via the callback function</param>
@@ -333,9 +317,8 @@ extern int rtlsdr_wait_async(rtlsdr_dev_t *dev, rtlsdr_read_async_cb_t cb, void 
 /// <param name="buf_len">Optional buffer length, must be multiple of 512,</param>
 ///      set to 0 for default buffer length (16 * 32 * 512)
 /// <returns>0 on success</returns>
-[<DllImport("librtlsdr", CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_read_async(rtlsdr_dev_t *dev, rtlsdr_read_async_cb_t cb, void *ctx, uint32_t buf_num, uint32_t buf_len);
-*)
+//[<DllImport("librtlsdr", CallingConvention=PlatformCallingConvention)>]
+//extern int rtlsdr_read_async(rtlsdr_dev_t *dev, rtlsdr_read_async_cb_t cb, void *ctx, uint32_t buf_num, uint32_t buf_len)
 
 /// Cancel all pending asynchronous operations on the device.
 ///
