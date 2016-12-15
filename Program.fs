@@ -8,7 +8,7 @@ open FSharp.NativeInterop
 open Hamstr.RtlSdr
 
 let workerFunc dev =
-    let f = rtlsdr_read_async_cb_t (fun (a, b, c) -> printfn "oink! %A %A %A" a b c)
+    let f = rtlsdr_read_async_cb_t (fun a b c -> printfn "oink! %A %A %A" a b c)
     let u = rtlsdr_read_async(dev, f, 4711n, 0u, 16384u)
     ()
 

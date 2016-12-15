@@ -309,7 +309,7 @@ extern int rtlsdr_read_sync(rtlsdr_dev_t dev, void *buf, int len, int *n_read);
 
 // typedef void( *rtlsdr_read_async_cb_t)(unsigned char *buf, uint32_t len, void *ctx);
 [<UnmanagedFunctionPointer(PlatformCallingConvention)>] 
-type rtlsdr_read_async_cb_t = delegate of (nativeint * uint32 * nativeint) -> unit
+type rtlsdr_read_async_cb_t = delegate of nativeint * uint32 * nativeint -> unit
 
 /// Read samples from the device asynchronously. This function will block until
 /// it is being canceled using rtlsdr_cancel_async()
