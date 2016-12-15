@@ -3,19 +3,13 @@
 
 open System
 open System.Runtime.InteropServices
-open System.Threading
 open FSharp.NativeInterop
+open Hamstr.RtlSdrNative
 open Hamstr.RtlSdr
-
-let workerFunc dev =
-    let f = rtlsdr_read_async_cb_t (fun a b c -> printfn "oink! %A %A %A" a b c)
-    let u = rtlsdr_read_async(dev, f, 4711n, 0u, 16384u)
-    ()
-
 
 [<EntryPoint>]
 let main argv = 
-    let count = rtlsdr_get_device_count()
+    let count = DeviceCount()
     match count with
     | 0u -> printfn "No devices found"
     | n -> 
@@ -40,10 +34,8 @@ let main argv =
         printfn "rtlsdr_reset_buffer returned %A" bur
         
         // Read with async callback
-        let devFunc() = workerFunc dev
-        let worker = new Thread(new ThreadStart(devFunc))
-        worker.Start()
-        worker.Join()
+        let f = rtlsdr_read_async_cb_t (fun a b c -> printfn "oink! %A %A %A" a b c)
+        let u = rtlsdr_read_async(dev, f, 4711n, 0u, 16384u)
 
         let s = rtlsdr_close(dev)
         printfn "close returned %A" s
