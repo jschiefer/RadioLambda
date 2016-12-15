@@ -1,6 +1,7 @@
 module Hamstr.RtlSdr
 
 open System
+open System.Text
 open System.Runtime.InteropServices
 open Microsoft.FSharp.NativeInterop
 
@@ -58,7 +59,7 @@ extern char* rtlsdr_get_device_name(uint32 index)
 /// <param name="serial">Serial number, may be NULL</param>
 /// <returns>0 on success</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_get_device_usb_strings(uint32 index, char *manufact, char *product, char *serial)
+extern int rtlsdr_get_device_usb_strings(uint32 index, StringBuilder manufact, StringBuilder product, StringBuilder serial)
 
 /// <summary>Get device index by USB serial string descriptor.</summary>
 ///
@@ -69,13 +70,13 @@ extern int rtlsdr_get_device_usb_strings(uint32 index, char *manufact, char *pro
 /// <returns>-3 if devices were found, but none with matching name</returns>
  
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_get_index_by_serial(char *serial)
+extern int rtlsdr_get_index_by_serial(StringBuilder serial)
 
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_open(rtlsdr_dev_t * *dev, uint32 index)
+extern int rtlsdr_open(rtlsdr_dev_t& dev, uint32 index)
 
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_close(rtlsdr_dev_t *dev)
+extern int rtlsdr_close(rtlsdr_dev_t dev)
 
 // configuration functions
 ///
@@ -92,7 +93,7 @@ extern int rtlsdr_close(rtlsdr_dev_t *dev)
 /// <param name="tuner_freq">Frequency value used to clock the tuner IC in Hz</param>
 /// <returns>0 on success</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_set_xtal_freq(rtlsdr_dev_t *dev, uint32_t rtl_freq, uint32_t tuner_freq)
+extern int rtlsdr_set_xtal_freq(rtlsdr_dev_t dev, uint32_t rtl_freq, uint32_t tuner_freq)
 
 /// Get crystal oscillator frequencies used for the RTL2832 and the tuner IC.
 ///
@@ -103,7 +104,7 @@ extern int rtlsdr_set_xtal_freq(rtlsdr_dev_t *dev, uint32_t rtl_freq, uint32_t t
 /// <param name="tuner_freq">Frequency value used to clock the tuner IC in Hz</param>
 /// <returns>0 on success</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_get_xtal_freq(rtlsdr_dev_t *dev, uint32_t *rtl_freq, uint32_t *tuner_freq);
+extern int rtlsdr_get_xtal_freq(rtlsdr_dev_t dev, uint32_t *rtl_freq, uint32_t *tuner_freq);
 
 /// Get USB device strings.
 ///
@@ -115,7 +116,7 @@ extern int rtlsdr_get_xtal_freq(rtlsdr_dev_t *dev, uint32_t *rtl_freq, uint32_t 
 /// <param name="serial">Serial number, may be NULL</param>
 /// <returns>0 on success</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_get_usb_strings(rtlsdr_dev_t *dev, char *manufact, char *product, char *serial);
+extern int rtlsdr_get_usb_strings(rtlsdr_dev_t dev, StringBuilder manufact, StringBuilder product, StringBuilder serial);
 
 /// Write the device EEPROM
 ///
@@ -128,7 +129,7 @@ extern int rtlsdr_get_usb_strings(rtlsdr_dev_t *dev, char *manufact, char *produ
 /// <returns>-2 if EEPROM size is exceeded</returns>
 /// <returns>-3 if no EEPROM was found</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_write_eeprom(rtlsdr_dev_t *dev, uint8_t *data, uint8_t offset, uint16_t len);
+extern int rtlsdr_write_eeprom(rtlsdr_dev_t dev, uint8_t *data, uint8_t offset, uint16_t len);
 
 /// Read the device EEPROM
 ///
@@ -141,17 +142,17 @@ extern int rtlsdr_write_eeprom(rtlsdr_dev_t *dev, uint8_t *data, uint8_t offset,
 /// <returns>-2 if EEPROM size is exceeded</returns>
 /// <returns>-3 if no EEPROM was found</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_read_eeprom(rtlsdr_dev_t *dev, uint8_t *data, uint8_t offset, uint16_t len);
+extern int rtlsdr_read_eeprom(rtlsdr_dev_t dev, uint8_t *data, uint8_t offset, uint16_t len);
 
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_set_center_freq(rtlsdr_dev_t *dev, uint32_t freq);
+extern int rtlsdr_set_center_freq(rtlsdr_dev_t dev, uint32_t freq);
 
 /// Get actual frequency the device is tuned to.
 ///
 /// <param name="dev">The device handle given by rtlsdr_open()</param>
 /// <returns>0 on error, frequency in Hz otherwise</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern uint32_t rtlsdr_get_center_freq(rtlsdr_dev_t *dev);
+extern uint32_t rtlsdr_get_center_freq(rtlsdr_dev_t dev);
 
 /// Set the frequency correction value for the device.
 ///
@@ -159,14 +160,14 @@ extern uint32_t rtlsdr_get_center_freq(rtlsdr_dev_t *dev);
 /// <param name="ppm">Correction value in parts per million (ppm)</param>
 /// <returns>0 on success</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_set_freq_correction(rtlsdr_dev_t *dev, int ppm);
+extern int rtlsdr_set_freq_correction(rtlsdr_dev_t dev, int ppm);
 
 /// Get actual frequency correction value of the device.
 ///
 /// <param name="dev">The device handle given by rtlsdr_open()</param>
 /// <returns>correction value in parts per million (ppm)</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_get_freq_correction(rtlsdr_dev_t *dev);
+extern int rtlsdr_get_freq_correction(rtlsdr_dev_t dev);
 
 type rtlsdr_tuner =
     | RTLSDR_TUNER_UNKNOWN = 0
@@ -182,7 +183,7 @@ type rtlsdr_tuner =
 /// <param name="dev">The device handle given by rtlsdr_open()</param>
 /// <returns>RTLSDR_TUNER_UNKNOWN on error, tuner type otherwise</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern rtlsdr_tuner rtlsdr_get_tuner_type(rtlsdr_dev_t *dev)
+extern rtlsdr_tuner rtlsdr_get_tuner_type(rtlsdr_dev_t dev)
 
 /// Get a list of gains supported by the tuner.
 ///
@@ -193,7 +194,7 @@ extern rtlsdr_tuner rtlsdr_get_tuner_type(rtlsdr_dev_t *dev)
 /// <param name="gains">Array of gain values. In tenths of a dB, 115 means 11.5 dB.</param>
 /// <returns><= 0 on error, number of available (returned) gain values otherwise</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_get_tuner_gains(rtlsdr_dev_t *dev, int *gains);
+extern int rtlsdr_get_tuner_gains(rtlsdr_dev_t dev, int *gains);
 
 /// Set the gain for the device.
 /// Manual gain mode must be enabled for this to work.
@@ -208,14 +209,14 @@ extern int rtlsdr_get_tuner_gains(rtlsdr_dev_t *dev, int *gains);
 /// <param name="gain">In tenths of a dB, 115 means 11.5 dB.</param>
 /// <returns>0 on success</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_set_tuner_gain(rtlsdr_dev_t *dev, int gain);
+extern int rtlsdr_set_tuner_gain(rtlsdr_dev_t dev, int gain);
 
 /// Get actual gain the device is configured to.
 ///
 /// <param name="dev">The device handle given by rtlsdr_open()</param>
 /// <returns>0 on error, gain in tenths of a dB, 115 means 11.5 dB.</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_get_tuner_gain(rtlsdr_dev_t *dev);
+extern int rtlsdr_get_tuner_gain(rtlsdr_dev_t dev);
 
 ///* Set the intermediate frequency gain for the device.
 ///
@@ -224,7 +225,7 @@ extern int rtlsdr_get_tuner_gain(rtlsdr_dev_t *dev);
 /// <param name="gain">In tenths of a dB, -30 means -3.0 dB.</param>
 /// <returns>0 on success</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_set_tuner_if_gain(rtlsdr_dev_t *dev, int stage, int gain);
+extern int rtlsdr_set_tuner_if_gain(rtlsdr_dev_t dev, int stage, int gain);
 
 /// Set the gain mode (automatic/manual) for the device.
 /// Manual gain mode must be enabled for the gain setter function to work.
@@ -233,18 +234,18 @@ extern int rtlsdr_set_tuner_if_gain(rtlsdr_dev_t *dev, int stage, int gain);
 /// <param name="manual">Gain mode, 1 means manual gain mode shall be enabled.</param>
 /// <returns>0 on success</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_set_tuner_gain_mode(rtlsdr_dev_t *dev, int manual);
+extern int rtlsdr_set_tuner_gain_mode(rtlsdr_dev_t dev, int manual);
 
 /// this will select the baseband filters according to the requested sample rate */
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_set_sample_rate(rtlsdr_dev_t *dev, uint32_t rate);
+extern int rtlsdr_set_sample_rate(rtlsdr_dev_t dev, uint32_t rate);
 
 /// Get actual sample rate the device is configured to.
 ///
 /// <param name="dev">The device handle given by rtlsdr_open()</param>
 /// <returns>0 on error, sample rate in Hz otherwise</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern uint32_t rtlsdr_get_sample_rate(rtlsdr_dev_t *dev);
+extern uint32_t rtlsdr_get_sample_rate(rtlsdr_dev_t dev);
 
 /// Enable test mode that returns an 8 bit counter instead of the samples.
 /// The counter is generated inside the RTL2832.
@@ -253,7 +254,7 @@ extern uint32_t rtlsdr_get_sample_rate(rtlsdr_dev_t *dev);
 /// <param name="test">Mode, 1 means enabled, 0 disabled</param>
 /// <returns>0 on success</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_set_testmode(rtlsdr_dev_t *dev, int on);
+extern int rtlsdr_set_testmode(rtlsdr_dev_t dev, int on);
 
 /// Enable or disable the internal digital AGC of the RTL2832.
 ///
@@ -261,7 +262,7 @@ extern int rtlsdr_set_testmode(rtlsdr_dev_t *dev, int on);
 /// <param name="digital">aGC mode, 1 means enabled, 0 disabled</param>
 /// <returns>0 on success</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_set_agc_mode(rtlsdr_dev_t *dev, int on);
+extern int rtlsdr_set_agc_mode(rtlsdr_dev_t dev, int on);
 
 /// Enable or disable the direct sampling mode. When enabled, the IF mode
 /// of the RTL2832 is activated, and rtlsdr_set_center_freq() will control
@@ -272,7 +273,7 @@ extern int rtlsdr_set_agc_mode(rtlsdr_dev_t *dev, int on);
 /// <param name="on">0 means disabled, 1 I-ADC input enabled, 2 Q-ADC input enabled</param>
 /// <returns>0 on success</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_set_direct_sampling(rtlsdr_dev_t *dev, int on);
+extern int rtlsdr_set_direct_sampling(rtlsdr_dev_t dev, int on);
 
 /// Get state of the direct sampling mode
 ///
@@ -280,7 +281,7 @@ extern int rtlsdr_set_direct_sampling(rtlsdr_dev_t *dev, int on);
 /// <returns>-1 on error, 0 means disabled, 1 I-ADC input enabled</returns>
 ///	    2 Q-ADC input enabled
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_get_direct_sampling(rtlsdr_dev_t *dev);
+extern int rtlsdr_get_direct_sampling(rtlsdr_dev_t dev);
 
 /// Enable or disable offset tuning for zero-IF tuners, which allows to avoid
 /// problems caused by the DC offset of the ADCs and 1/f noise.
@@ -289,25 +290,26 @@ extern int rtlsdr_get_direct_sampling(rtlsdr_dev_t *dev);
 /// <param name="on">0 means disabled, 1 enabled</param>
 /// <returns>0 on success</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_set_offset_tuning(rtlsdr_dev_t *dev, int on);
+extern int rtlsdr_set_offset_tuning(rtlsdr_dev_t dev, int on);
 
 /// Get state of the offset tuning mode
 ///
 /// <param name="dev">The device handle given by rtlsdr_open()</param>
 /// <returns>-1 on error, 0 means disabled, 1 enabled</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_get_offset_tuning(rtlsdr_dev_t *dev);
+extern int rtlsdr_get_offset_tuning(rtlsdr_dev_t dev);
 
 // streaming functions
 
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_reset_buffer(rtlsdr_dev_t *dev);
+extern int rtlsdr_reset_buffer(rtlsdr_dev_t dev);
 
-[<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_read_sync(rtlsdr_dev_t *dev, void *buf, int len, int *n_read);
+[<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>] 
+extern int rtlsdr_read_sync(rtlsdr_dev_t dev, void *buf, int len, int *n_read);
 
 // typedef void( *rtlsdr_read_async_cb_t)(unsigned char *buf, uint32_t len, void *ctx);
-type rtlsdr_read_async_cb_t = delegate of (IntPtr * uint32_t * nativeint) -> unit
+[<UnmanagedFunctionPointer(PlatformCallingConvention)>] 
+type rtlsdr_read_async_cb_t = delegate of (nativeint * uint32 * nativeint) -> unit
 
 /// Read samples from the device asynchronously. This function will block until
 /// it is being canceled using rtlsdr_cancel_async()
@@ -321,11 +323,11 @@ type rtlsdr_read_async_cb_t = delegate of (IntPtr * uint32_t * nativeint) -> uni
 ///      set to 0 for default buffer length (16 * 32 * 512)
 /// <returns>0 on success</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_read_async(rtlsdr_dev_t *dev, rtlsdr_read_async_cb_t cb, void *ctx, uint32_t buf_num, uint32_t buf_len)
+extern int rtlsdr_read_async(rtlsdr_dev_t dev, rtlsdr_read_async_cb_t cb, nativeint ctx, uint32_t buf_num, uint32_t buf_len)
 
 /// Cancel all pending asynchronous operations on the device.
 ///
 /// <param name="dev">The device handle given by rtlsdr_open()</param>
 /// <returns>0 on success</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern int rtlsdr_cancel_async(rtlsdr_dev_t *dev);
+extern int rtlsdr_cancel_async(rtlsdr_dev_t dev);
