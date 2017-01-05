@@ -9,16 +9,15 @@ open Hamstr.RtlSdr
 
 [<EntryPoint>]
 let main argv = 
-    let count = DeviceCount()
-    match count with
-    | 0u -> printfn "No devices found"
+    match DeviceCount() with
+    | 0u -> 
+        printfn "No devices found"
+    | 1u -> 
+        printfn "1 device found: %A" (DeviceName 0u)
     | n -> 
-        printfn "%d devices found" n
+        printfn "%d devices found:" n
         [0u..n-1u] 
-        |> List.iter (fun i -> 
-            let name = rtlsdr_get_device_name(i)
-            printfn "%A" name
-        )
+        |> List.iter (DeviceName >> printfn "\t%A")
 
     let mutable dev = 0n
     try 
