@@ -6,6 +6,7 @@
     "compilerName": "fsc",
     "compile": {
       "includeFiles": [
+        "Model.fs",
         "RtlSdrNative.fs",
         "RtlSdr.fs",
         "Program.fs"

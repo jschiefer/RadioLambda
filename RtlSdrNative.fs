@@ -4,6 +4,7 @@ open System
 open System.Text
 open System.Runtime.InteropServices
 open FSharp.NativeInterop
+open Hamstr.Model
 
 (*
     Interface definitions for rtl-sdr
@@ -169,21 +170,12 @@ extern int rtlsdr_set_freq_correction(rtlsdr_dev_t dev, int ppm);
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
 extern int rtlsdr_get_freq_correction(rtlsdr_dev_t dev);
 
-type rtlsdr_tuner =
-    | RTLSDR_TUNER_UNKNOWN = 0
-    | RTLSDR_TUNER_E4000 = 1
-    | RTLSDR_TUNER_FC0012 = 2
-    | RTLSDR_TUNER_FC0013 = 3
-    | RTLSDR_TUNER_FC2580 = 4
-    | RTLSDR_TUNER_R820T = 5
-    | RTLSDR_TUNER_R828D = 6
-
 /// Get the tuner type.
 ///
 /// <param name="dev">The device handle given by rtlsdr_open()</param>
-/// <returns>RTLSDR_TUNER_UNKNOWN on error, tuner type otherwise</returns>
+/// <returns>UNKNOWN on error, tuner type otherwise</returns>
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
-extern rtlsdr_tuner rtlsdr_get_tuner_type(rtlsdr_dev_t dev)
+extern RtlSdrTuner rtlsdr_get_tuner_type(rtlsdr_dev_t dev)
 
 /// Get a list of gains supported by the tuner.
 ///
