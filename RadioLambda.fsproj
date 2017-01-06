@@ -40,6 +40,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model.fs" />
     <Compile Include="RtlSdrNative.fs" />
     <Compile Include="RtlSdr.fs" />
     <Compile Include="Program.fs" />
