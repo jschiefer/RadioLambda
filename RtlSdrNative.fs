@@ -39,11 +39,6 @@ type uint8_t = uint8
 type uint16_t = uint16
 type uint32_t = uint32
 
-(*
-[<DllImport("librtlsdr", CallingConvention=PlatformCallingConvention)>]
-extern typedef struct rtlsdr_dev rtlsdr_dev_t
-*)
-
 /// Return the number of compatible devices detected
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
 extern uint32 rtlsdr_get_device_count()
@@ -69,7 +64,6 @@ extern int rtlsdr_get_device_usb_strings(uint32 index, StringBuilder manufact, S
 /// <returns>-1 if name is NULL</returns>
 /// <returns>-2 if no devices were found at all</returns>
 /// <returns>-3 if devices were found, but none with matching name</returns>
- 
 [<DllImport(PlatformLibrary, CallingConvention=PlatformCallingConvention)>]
 extern int rtlsdr_get_index_by_serial(StringBuilder serial)
 
